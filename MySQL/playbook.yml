@@ -2,7 +2,7 @@
 # DO Community Playbooks: Wordpress on Ubuntu 18.04 LAMP
 #########################################################
 ---
-- hosts: mysql-server
+- hosts: server-mysql
   become: true
   vars_files:
     - vars/default.yml
@@ -64,3 +64,22 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
       tags: [ mysql ]
+
+    - name: Create MySQL user for WordPress
+      mysql_user:
+        name: "{{ mysql_user }}"
+        password: "{{ mysql_password }}"
+        priv: "{{ mysql_db }}.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        host : "{{ server-wordpress }}"
+      tags: [ mysql ]
+
+  # UFW Configuration
+    - name: "UFW - Allow port 3306"
+      ufw:
+        rule: allow
+        port: "3306"
+        proto: tcp
+      tags: [ system ]

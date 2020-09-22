@@ -62,6 +62,14 @@
         proto: tcp
       tags: [ system ]
 
+    - name: "UFW - Allow port 3306"
+      ufw:
+        rule: allow
+        port: "3306"
+        proto: tcp
+      tags: [ system ]
+
+
   # WordPress Configuration
     - name: Download and unpack latest WordPress
       unarchive:
