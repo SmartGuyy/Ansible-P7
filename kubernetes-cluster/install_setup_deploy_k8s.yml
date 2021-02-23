@@ -135,13 +135,6 @@
   gather_facts: yes
   connection: ssh
 
-  vars_prompt:
-
-   - name: "k8s_master_ip"
-     prompt: "Enter the Apiserver advertise address, example: 192.168.0.26"
-     private: no
-
-
   tasks:
 
    - name: Intilizing Kubernetes Cluster
