@@ -136,7 +136,7 @@
     - vars/default.yml
   tasks:
 
-   - name: Intilizing Kubernetes Cluster
+   - name: Initializing Kubernetes Cluster
      command: kubeadm init --pod-network-cidr "{{ pod_network_cidr }}" --apiserver-advertise-address "{{ k8s_master_ip }}"
      run_once: true
      delegate_to: "{{ k8s_master_ip }}"
@@ -186,7 +186,7 @@
 
    - pause: seconds=30
 
-   - name: Get the token for joining the nodes with Kuberentes master.
+   - name: Get the token for joining the nodes with Kubernetes master.
      shell: kubeadm token create  --print-join-command
      register: kubernetes_join_command
 
