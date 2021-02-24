@@ -6,8 +6,6 @@
   become_user: root
   gather_facts: yes
   connection: ssh
-  vars_files:
-    - vars/default.yml
   tasks:
    
    - name: Make the Swap inactive
@@ -134,7 +132,8 @@
   become_user: root
   gather_facts: yes
   connection: ssh
-
+  vars_files:
+    - vars/default.yml
   tasks:
 
    - name: Intilizing Kubernetes Cluster
