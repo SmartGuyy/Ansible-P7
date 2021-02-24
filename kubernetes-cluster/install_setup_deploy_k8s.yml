@@ -6,7 +6,8 @@
   become_user: root
   gather_facts: yes
   connection: ssh
-  
+  vars_files:
+    - vars/default.yml
   tasks:
    
    - name: Make the Swap inactive
@@ -120,8 +121,8 @@
    - name: Reboot all the kubernetes nodes.
      reboot:
        post_reboot_delay: 10
-       reboot_timeout: 40
-       connect_timeout: 60
+       reboot_timeout: 60
+       connect_timeout: 80
        test_command: uptime
 
    - pause: seconds=20
@@ -137,53 +138,52 @@
   tasks:
 
    - name: Intilizing Kubernetes Cluster
-     command: kubeadm init --pod-network-cidr 192.168.100.0/24  --apiserver-advertise-address 10.0.0.76
+     command: kubeadm init --pod-network-cidr "{{ pod_network_cidr }}" --apiserver-advertise-address "{{ k8s_master_ip }}"
      run_once: true
-     delegate_to: "10.0.0.76"
-
+     delegate_to: "{{ k8s_master_ip }}"
    - pause: seconds=30
 
    - name: Create directory for kube config.
-     become_user: ansible
+     become_user: ubuntu
      become_method: sudo
      become: yes
      file: 
-       path: /home/ubuntu/.kube
+       path: /home/{{ ansible_user }}/.kube
        state: directory
-       owner: "ubuntu"
-       group: "ubuntu"
+       owner: "{{ ansible_user }}"
+       group: "{{ ansible_user }}"
        mode: 0755
 
-   - name: Copy /etc/kubernetes/admin.conf to user home directory /home/ubuntu/.kube/config.
+   - name: Copy /etc/kubernetes/admin.conf to user home directory /home/{{ ansible_user }}/.kube/config.
      become_user: root
      become_method: sudo
      become: yes
      copy:
        src: /etc/kubernetes/admin.conf
-       dest: /home/ubuntu/.kube/config
+       dest: /home/{{ ansible_user }}/.kube/config
        remote_src: yes
-       owner: "ubuntu"
-       group: "ubuntu"
+       owner: "{{ ansible_user }}"
+       group: "{{ ansible_user }}"
        mode: '0644'
 
    - pause: seconds=10
 
    - name: Remove the cache directory.
-     become_user: ansible
+     become_user: ubuntu
      become_method: sudo
      become: yes
      file: 
-       path: /home/ubuntu/.kube/cache
+       path: /home/{{ ansible_user }}/.kube/cache
        state: absent
 
    - name: Create Pod Network & RBAC.
-     become_user: ansible
+     become_user: ubuntu
      become_method: sudo
      become: yes
      command: "{{ item }}"
      with_items: 
-        - kubectl apply -f https://raw.githubusercontent.com/SmartGuyy/Ansible-P7-P13/master/kubernetes-cluster/calico.yaml
-        - kubectl apply -f https://raw.githubusercontent.com/SmartGuyy/Ansible-P7-P13/master/kubernetes-cluster/rbac-kdd.yaml
+        - kubectl apply -f {{ pod_network_manifest_file }}
+        - kubectl apply -f {{ rbac_manifest_file }}
 
    - pause: seconds=30
 
@@ -239,7 +239,7 @@
 
    - name: Configure kubectl command auto completion.
      lineinfile:
-       dest: /home/ubuntu/.bashrc
+       dest: /home/{{ ansible_user }}.bashrc
        line: 'source <(kubectl completion bash)'
        insertafter: EOF
 ...
