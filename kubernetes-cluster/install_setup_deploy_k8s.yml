@@ -139,7 +139,7 @@
    - name: Initializing Kubernetes Cluster
      command: kubeadm init --pod-network-cidr "{{ pod_network_cidr }}" --apiserver-advertise-address "{{ k8s_master_ip }}"
      run_once: true
-     delegate_to: "{{ k8s_master_ip }}"
+     delegate_to: master
    - pause: seconds=30
 
    - name: Create directory for kube config.
