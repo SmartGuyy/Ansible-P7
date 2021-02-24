@@ -30,7 +30,6 @@
        block: |
             overlay
             br_netfilter
-
    - name: Create a empty file for kubernetes sysctl params.
      copy:
        content: ""
