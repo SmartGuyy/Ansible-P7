@@ -1,32 +1,12 @@
-##########################
-# DO Community Playbooks
-# Example Inventory
-##########################
-
-#########################################################################
-# The "servers" groups is an example of a group with three servers,
-# each identified by a custom alias.
-#########################################################################
-
-[users]
-10.0.1.232
+# [users]
+# 10.0.1.232
 # k8nod1.linuxsysadmins.local
 # k8nod2.linuxsysadmins.local
 
 [masters]
-master ansible_host=10.0.1.232 ansible_user=ansible
+master ansible_host=ec2-3-135-21-64.us-east-2.compute.amazonaws.com ansible_user=ubuntu
 
 # [workers]
+# 10.0.1.232
 # worker1 ansible_host=k8nod1.linuxsysadmins.local ansible_user=ansible
 # worker2 ansible_host=k8nod2.linuxsysadmins.local ansible_user=ansible
-
-
-##########################################################################
-# Makes sure we use Python 3 (/usr/bin/python3) on remote hosts.
-# [servers:vars] sets global values for all nodes in the "servers" group.
-# This is necessary because by default Ansible will try to use
-# /usr/bin/python, which is not available on newer Ubuntu versions.
-#########################################################################
-[servers:vars]
-ansible_python_interpreter=/usr/bin/python3
-
